@@ -25,9 +25,16 @@
   ;RequestExecutionLevel admin
 
 ;--------------------------------
+;Variables
+
+  Var StartMenuFolder
+  
+;--------------------------------
 ;Interface Settings
 
   !define MUI_ABORTWARNING
+  
+  !define MUI_ICON "misc\swganh.ico"
   
   !define MUI_FINISHPAGE
   !define MUI_FINISHPAGE_RUN
@@ -46,6 +53,14 @@
   !insertmacro MUI_PAGE_LICENSE "misc\license.txt"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
+  
+  ;Start Menu Folder Page Configuration
+  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\SWGANH Client" 
+  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+  
+  !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
+  
   !insertmacro MUI_PAGE_INSTFILES
   !insertmacro MUI_PAGE_FINISH
 
@@ -82,6 +97,15 @@ Section "Game Client" SecClient
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SWGANH Client" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SWGANH Client" "NoRepair" 1
   WriteUninstaller "$INSTDIR\swganh\uninstall.exe"
+  
+  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    
+    ;Create shortcuts
+    CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\uninstall.lnk" "$INSTDIR\swganh\uninstall.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\swganh.lnk" "$INSTDIR\swganh\swganh.exe"
+  
+  !insertmacro MUI_STARTMENU_WRITE_END
 
 SectionEnd
 
@@ -116,6 +140,11 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
 
+  !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
+    
+  Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
+  RMDir "$SMPROGRAMS\$StartMenuFolder"
+  
   DeleteRegKey /ifempty HKCU "Software\SWGANH Client"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SWGANH Client"
 
