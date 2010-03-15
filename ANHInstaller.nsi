@@ -17,7 +17,8 @@
   OutFile "anhclient_setup.exe"
   ShowInstDetails show
   BrandingText " "
-
+  SetCompressor /SOLID /FINAL lzma
+  
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\SWGANH Client" ""
 
@@ -83,11 +84,14 @@ Section "SWGANH Game Client" SecClient
   
   ;Download missing tre files
   Call DownloadTresIfMissing
-
+  
   ;ADD YOUR OWN FILES HERE...
   SetOutPath $INSTDIR\swganh
   File /r /x .svn client_files\*.*
 
+  ;create desktop shortcut
+  CreateShortCut "$DESKTOP\SWGANH Client.lnk" "$INSTDIR\swganh\swganh.exe" "-- -s Station  subscriptionFeatures=1 gameFeatures=255"
+  
   ;Store installation folder
   WriteRegStr HKCU "Software\SWGANH Client" "" $INSTDIR
 
@@ -116,6 +120,9 @@ Section "Documentation" SecGuide
   SetOutPath "$INSTDIR\swganh"  
   File /r /x .svn docs\*.*
   
+  ;create desktop shortcut
+  CreateShortCut "$DESKTOP\SWGANH - QA Guide.lnk" "$INSTDIR\swganh\SWGANH - QA Guide.chm" ""
+  
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\docs\QA Guide.lnk" "$INSTDIR\swganh\SWGANH - QA Guide.chm"
   !insertmacro MUI_STARTMENU_WRITE_END
@@ -141,6 +148,9 @@ SectionEnd
 Section "Uninstall"
 
   ;ADD YOUR OWN FILES HERE...
+  Delete "$DESKTOP\SWGANH Client.lnk"
+  Delete "$DESKTOP\SWGANH - QA Guide.lnk"
+  
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
       
   RMDir /r "$SMPROGRAMS\$StartMenuFolder"  
