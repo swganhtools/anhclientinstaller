@@ -17,7 +17,6 @@
   OutFile "anhclient_setup.exe"
   ShowInstDetails show
   BrandingText " "
-  SetCompressor /SOLID /FINAL lzma
   
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\SWGANH Client" ""
@@ -164,21 +163,23 @@ SectionEnd
 ;--------------------------------
 ;Download File If Missing 
 Function DownloadFileIfMissing
-	Exch $R0
+	Exch $R0 ;Filename
 	Exch
-	Exch $R1
+	Exch $R1 ;File Group "main,space,npe"
 		
-	IfFileExists $INSTDIR\$R0 _found _missing
+	IfFileExists $INSTDIR\$R0 _finish _missing
 	_missing:
-		NSISdl::download http://patch.starwarsgalaxies.com:7040/patch/swg/$R1/$R0 $INSTDIR\$R0
+		inetc::get /TIMEOUT 30000 /QUESTION "" /CAPTION "Star Wars Galaxies Tre File - $R0" /RESUME "Network error. Retry?" http://patch.starwarsgalaxies.com:7040/patch/swg/$R1/$R0 $INSTDIR\$R0 /END
 		Pop $0 ;Get the return value
-		StrCmp $0 "success" +3
-			MessageBox MB_OK "Download $0"
-			Quit	
-	_found:
+		StrCmp $0 "OK" _finish
+      MessageBox MB_OK "Download Status: $0 - $R0"
+      Quit
+	_finish:
+  
 	Pop $R0
 	Pop $R1
 FunctionEnd
+
 
 Function DownloadTresIfMissing
 	Push "main" 
@@ -384,6 +385,7 @@ Function DownloadTresIfMissing
 	Push "space" 
 	Push "patch_sku1_14_00.tre"
 	Call DownloadFileIfMissing
+ 
 FunctionEnd
 
 Var SWGDIR
