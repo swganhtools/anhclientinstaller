@@ -13,7 +13,7 @@
 ;General
 
   ;Name and file
-  Name "SWG:ANH Client"
+  Name "SWGANH Client"
   OutFile "anhclient_setup.exe"
   ShowInstDetails show
   BrandingText " "
@@ -22,7 +22,7 @@
   InstallDirRegKey HKCU "Software\SWGANH Client" ""
 
   ;Request application privileges for Windows Vista
-  ;RequestExecutionLevel admin
+  RequestExecutionLevel admin
 
 ;--------------------------------
 ;Variables
@@ -39,7 +39,7 @@
   !define MUI_FINISHPAGE
   !define MUI_FINISHPAGE_RUN
     !define MUI_FINISHPAGE_RUN_NOTCHECKED
-    !define MUI_FINISHPAGE_RUN_TEXT "Start the SWG:ANH Client"
+    !define MUI_FINISHPAGE_RUN_TEXT "Start the SWG:ANH Client Configuration"
     !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchClient"
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\swganh\readme.txt"
     !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme Document"
@@ -77,7 +77,7 @@
 ;--------------------------------
 ;Installer Sections
 
-Section "Game Client" SecClient
+Section "SWGANH Game Client" SecClient
   SetOverwrite ifdiff
   SetOutPath $INSTDIR
   
@@ -102,20 +102,23 @@ Section "Game Client" SecClient
     
     ;Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\uninstall.lnk" "$INSTDIR\swganh\uninstall.exe"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\swganh.lnk" "$INSTDIR\swganh\swganh.exe"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\docs\QA Guide.lnk" "$INSTDIR\swganh\SWGANH - QA Guide.chm"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\docs\readme.lnk" "$INSTDIR\swganh\readme.txt"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\SWGANH Client.lnk" "$INSTDIR\swganh\swganh.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Client.lnk" "$INSTDIR\swganh\swganh_config.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\README.lnk" "$INSTDIR\swganh\readme.txt"
   
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
 SectionEnd
 
-Section "QA Guide" SecGuide
+Section "Documentation" SecGuide
 
   SetOutPath "$INSTDIR\swganh"  
   File /r /x .svn docs\*.*
+  
+  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\docs\QA Guide.lnk" "$INSTDIR\swganh\SWGANH - QA Guide.chm"
+  !insertmacro MUI_STARTMENU_WRITE_END
   
 SectionEnd
 
@@ -123,8 +126,8 @@ SectionEnd
 ;Descriptions
 
   ;Language strings
-  LangString DESC_SecClient ${LANG_ENGLISH} "The SWG:ANH Game Client is used to connect to SWG:ANH servers."
-  LangString DESC_SecGuide ${LANG_ENGLISH} "The SWG:ANH QA Guide provides useful information and tutorials for testers."
+  LangString DESC_SecClient ${LANG_ENGLISH} "The SWG:ANH Game Client is used to connect to SWG:ANH based servers."
+  LangString DESC_SecGuide ${LANG_ENGLISH} "The SWG:ANH Documentation feature provides useful information, tutorials and guides for testers."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -138,18 +141,10 @@ SectionEnd
 Section "Uninstall"
 
   ;ADD YOUR OWN FILES HERE...
-
-  Delete "$INSTDIR\swganh\uninstall.exe"
-
-  RMDir "$INSTDIR"
-
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
-    
-  Delete "$SMPROGRAMS\$StartMenuFolder\uninstall.lnk"
-  Delete "$SMPROGRAMS\$StartMenuFolder\swganh.lnk"
-  Delete "$SMPROGRAMS\$StartMenuFolder\docs\QA Guide.lnk"
-  Delete "$SMPROGRAMS\$StartMenuFolder\docs\readme.lnk"
-  RMDir "$SMPROGRAMS\$StartMenuFolder"
+      
+  RMDir /r "$SMPROGRAMS\$StartMenuFolder"  
+  RMDir /r "$INSTDIR"
   
   DeleteRegKey /ifempty HKCU "Software\SWGANH Client"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SWGANH Client"
@@ -387,19 +382,23 @@ Var SWGDIR
 Function .onInit
 ; Must set $INSTDIR here to avoid adding ${MUI_PRODUCT} to the end of the
 ; path when user selects a new directory using the 'Browse' button.
-;
-; First try and see if there is a valid installation of Star Wars Galaxies 
-; set the default directory to that. If not fall back to Program Files\StarWarsGalaxies.
-  ReadRegStr $SWGDIR HKCU "Software\Sony Online Entertainment\Installer\SWG" ""
-  StrCmp $SWGDIR "" not_installed installed
+
+; First see if we've already installed this and we're uninstalling now.
+  ReadRegStr $SWGDIR HKCU "Software\SWGANH Client" ""
+  StrCmp $SWGDIR "" anh_not_installed installed
+  anh_not_installed:
+  ; Second try and see if there is a valid installation of Star Wars Galaxies 
+  ; set the default directory to that. If not fall back to Program Files\StarWarsGalaxies.
+    ReadRegStr $SWGDIR HKCU "Software\Sony Online Entertainment\Installer\SWG" ""
+    StrCmp $SWGDIR "" swg_not_installed installed
+    swg_not_installed:
+      StrCpy $INSTDIR "$PROGRAMFILES\${MUI_PRODUCT}"
+      Goto +2
   installed:
     StrCpy $INSTDIR "$SWGDIR"
-    Goto +2
-  not_installed:
-    StrCpy $INSTDIR "$PROGRAMFILES\${MUI_PRODUCT}"
 FunctionEnd
 
 Function LaunchClient
   SetOutPath "$INSTDIR\swganh"
-  Exec "$INSTDIR\swganh\swganh.exe"
+  Exec "$INSTDIR\swganh\swganh_config.exe"
 FunctionEnd
