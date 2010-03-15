@@ -30,11 +30,15 @@
   !define MUI_ABORTWARNING
   
   !define MUI_FINISHPAGE
-	!define MUI_FINISHPAGE_RUN
-	!define MUI_FINISHPAGE_RUN_NOTCHECKED
+  !define MUI_FINISHPAGE_RUN
+    !define MUI_FINISHPAGE_RUN_NOTCHECKED
     !define MUI_FINISHPAGE_RUN_TEXT "Start the SWG:ANH Client"
     !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchClient"
-
+  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\swganh\readme.txt"
+    !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme Document"
+  !define MUI_FINISHPAGE_LINK "SWG:ANH Community Website"
+    !define MUI_FINISHPAGE_LINK_LOCATION "http://www.swganh.com/"
+  !define MUI_FINISHPAGE_NOREBOOTSUPPORT
 ;--------------------------------
 ;Pages
 
@@ -68,7 +72,7 @@ Section "Game Client" SecClient
   ;ADD YOUR OWN FILES HERE...
   SetOutPath $INSTDIR\swganh
   File /r /x .svn client_files\*.*
-    
+
   ;Store installation folder
   WriteRegStr HKCU "Software\SWGANH Client" "" $INSTDIR
 
