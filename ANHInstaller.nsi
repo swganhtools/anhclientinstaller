@@ -18,6 +18,14 @@
   ShowInstDetails show
   BrandingText " "
   
+  VIAddVersionKey "ProductName" "SWGANH Client"
+  VIAddVersionKey "CompanyName" "SWG:ANH"
+  VIAddVersionKey "LegalCopyright" "Copyright (c) 2010 SWG:ANH"
+  VIAddVersionKey "FileDescription" "Game client for SWG:ANH based servers."
+  VIAddVersionKey "FileVersion" "1.0.0.0"
+  VIProductVersion "1.0.0.0"
+
+
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\SWGANH Client" ""
 
