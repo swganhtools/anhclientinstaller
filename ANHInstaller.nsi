@@ -88,9 +88,6 @@ Section "SWGANH Game Client" SecClient
   SetOutPath $INSTDIR\swganh
   File /r /x .svn client_files\*.*
 
-  ;create desktop shortcut
-  CreateShortCut "$DESKTOP\SWGANH Client.lnk" "$INSTDIR\swganh\swganh.exe" "-- -s Station  subscriptionFeatures=1 gameFeatures=255"
-  
   ;Store installation folder
   WriteRegStr HKCU "Software\SWGANH Client" "" $INSTDIR
 
@@ -103,6 +100,8 @@ Section "SWGANH Game Client" SecClient
   
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
+    CreateShortCut "$DESKTOP\SWGANH Client.lnk" "$INSTDIR\swganh\swganh.exe" "-- -s Station  subscriptionFeatures=1 gameFeatures=255"
+  
     ;Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\SWGANH Client.lnk" "$INSTDIR\swganh\swganh.exe"
@@ -119,10 +118,9 @@ Section "Documentation" SecGuide
   SetOutPath "$INSTDIR\swganh"  
   File /r /x .svn docs\*.*
   
-  ;create desktop shortcut
-  CreateShortCut "$DESKTOP\SWGANH - QA Guide.lnk" "$INSTDIR\swganh\SWGANH - QA Guide.chm" ""
-  
+  ;create desktop shortcut  
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    CreateShortCut "$DESKTOP\SWGANH - QA Guide.lnk" "$INSTDIR\swganh\SWGANH - QA Guide.chm" ""
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\docs\QA Guide.lnk" "$INSTDIR\swganh\SWGANH - QA Guide.chm"
   !insertmacro MUI_STARTMENU_WRITE_END
   
