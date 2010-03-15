@@ -104,6 +104,9 @@ Section "Game Client" SecClient
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\uninstall.lnk" "$INSTDIR\swganh\uninstall.exe"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\swganh.lnk" "$INSTDIR\swganh\swganh.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\docs\QA Guide.lnk" "$INSTDIR\swganh\SWGANH - QA Guide.chm"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\docs\readme.lnk" "$INSTDIR\swganh\readme.txt"
+  
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -142,7 +145,10 @@ Section "Uninstall"
 
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
     
-  Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\uninstall.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\swganh.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\docs\QA Guide.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\docs\readme.lnk"
   RMDir "$SMPROGRAMS\$StartMenuFolder"
   
   DeleteRegKey /ifempty HKCU "Software\SWGANH Client"
@@ -375,12 +381,22 @@ Function DownloadTresIfMissing
 	Call DownloadFileIfMissing
 FunctionEnd
 
+Var SWGDIR
 ;--------------------------------
 ;Installer Functions
 Function .onInit
 ; Must set $INSTDIR here to avoid adding ${MUI_PRODUCT} to the end of the
 ; path when user selects a new directory using the 'Browse' button.
-  StrCpy $INSTDIR "$PROGRAMFILES\${MUI_PRODUCT}"
+;
+; First try and see if there is a valid installation of Star Wars Galaxies 
+; set the default directory to that. If not fall back to Program Files\StarWarsGalaxies.
+  ReadRegStr $SWGDIR HKCU "Software\Sony Online Entertainment\Installer\SWG" ""
+  StrCmp $SWGDIR "" not_installed installed
+  installed:
+    StrCpy $INSTDIR "$SWGDIR"
+    Goto +2
+  not_installed:
+    StrCpy $INSTDIR "$PROGRAMFILES\${MUI_PRODUCT}"
 FunctionEnd
 
 Function LaunchClient
