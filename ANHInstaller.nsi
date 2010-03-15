@@ -66,7 +66,8 @@ Section "Game Client" SecClient
   Call DownloadTresIfMissing
 
   ;ADD YOUR OWN FILES HERE...
-  File /r /x *.chm /x .svn client_files\*.*
+  SetOutPath $INSTDIR\swganh
+  File /r /x .svn client_files\*.*
     
   ;Store installation folder
   WriteRegStr HKCU "Software\SWGANH Client" "" $INSTDIR
@@ -82,9 +83,8 @@ SectionEnd
 
 Section "QA Guide" SecGuide
 
-  SetOutPath "$INSTDIR\swganh"
-  
-  File /r /x .svn client_files\swganh\*.chm
+  SetOutPath "$INSTDIR\swganh"  
+  File /r /x .svn docs\*.*
   
 SectionEnd
 
@@ -350,7 +350,7 @@ Function .onInit
   StrCpy $INSTDIR "$PROGRAMFILES\${MUI_PRODUCT}"
 FunctionEnd
 
-Function LaunchLink
+Function LaunchClient
   SetOutPath "$INSTDIR\swganh"
   Exec "$INSTDIR\swganh\swganh.exe"
 FunctionEnd
