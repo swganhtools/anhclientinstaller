@@ -1,6 +1,7 @@
 ;NSIS Modern User Interface
-;Welcome/Finish Page Example Script
-;Written by Joost Verburg
+
+!define MUI_PRODUCT "StarWarsGalaxies"
+!define MUI_VERSION "1.0.0"
 
 ;--------------------------------
 ;Include Modern UI
@@ -13,28 +14,32 @@
 
   ;Name and file
   Name "SWG:ANH Client"
-  OutFile "ANHClientInstaller.exe"
+  OutFile "anhclient_setup.exe"
   ShowInstDetails show
-
-  ;Default installation folder
-  InstallDir "$PROGRAMFILES\StarWarsGalaxies"
+  BrandingText " "
 
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\SWGANH Client" ""
 
   ;Request application privileges for Windows Vista
-  RequestExecutionLevel admin
+  ;RequestExecutionLevel admin
 
 ;--------------------------------
 ;Interface Settings
 
   !define MUI_ABORTWARNING
+  
+  !define MUI_FINISHPAGE
+	!define MUI_FINISHPAGE_RUN
+	!define MUI_FINISHPAGE_RUN_NOTCHECKED
+    !define MUI_FINISHPAGE_RUN_TEXT "Start the SWG:ANH Client"
+    !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchClient"
 
 ;--------------------------------
 ;Pages
 
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
+  !insertmacro MUI_PAGE_LICENSE "misc\license.txt"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
@@ -56,12 +61,13 @@
 Section "Game Client" SecClient
   SetOverwrite ifdiff
   SetOutPath $INSTDIR
+  
+  ;Download missing tre files
+  Call DownloadTresIfMissing
 
   ;ADD YOUR OWN FILES HERE...
-  Call DownloadTresIfMissing
-  
-  File /r /x *.chm Files\*.*
-  
+  File /r /x *.chm /x .svn client_files\*.*
+    
   ;Store installation folder
   WriteRegStr HKCU "Software\SWGANH Client" "" $INSTDIR
 
@@ -76,9 +82,9 @@ SectionEnd
 
 Section "QA Guide" SecGuide
 
-  SetOutPath "$INSTDIR"
-
-  ;ADD YOUR OWN FILES HERE...
+  SetOutPath "$INSTDIR\swganh"
+  
+  File /r /x .svn client_files\swganh\*.chm
   
 SectionEnd
 
@@ -102,7 +108,7 @@ Section "Uninstall"
 
   ;ADD YOUR OWN FILES HERE...
 
-  Delete "$INSTDIR\Uninstall.exe"
+  Delete "$INSTDIR\swganh\uninstall.exe"
 
   RMDir "$INSTDIR"
 
@@ -115,11 +121,12 @@ SectionEnd
 ;Download File If Missing 
 Function DownloadFileIfMissing
 	Exch $R0
+	Exch
 	Exch $R1
-	
+		
 	IfFileExists $INSTDIR\$R0 _found _missing
 	_missing:
-		NSISdl::download http://patch.starwarsgalaxies.com:7040/patch/swg/$R0/$R1 "$INSTDIR\$R1"
+		NSISdl::download http://patch.starwarsgalaxies.com:7040/patch/swg/$R1/$R0 $INSTDIR\$R0
 		Pop $0 ;Get the return value
 		StrCmp $0 "success" +3
 			MessageBox MB_OK "Download $0"
@@ -210,6 +217,14 @@ Function DownloadTresIfMissing
 	Push "data_sku1_07.tre"
 	Call DownloadFileIfMissing
   
+	Push "main" 
+	Push "data_static_mesh_00.tre"
+	Call DownloadFileIfMissing
+	
+	Push "main" 
+	Push "data_static_mesh_01.tre"
+	Call DownloadFileIfMissing
+	
 	Push "main" 
 	Push "data_texture_00.tre"
 	Call DownloadFileIfMissing
@@ -325,4 +340,17 @@ Function DownloadTresIfMissing
 	Push "space" 
 	Push "patch_sku1_14_00.tre"
 	Call DownloadFileIfMissing
+FunctionEnd
+
+;--------------------------------
+;Installer Functions
+Function .onInit
+; Must set $INSTDIR here to avoid adding ${MUI_PRODUCT} to the end of the
+; path when user selects a new directory using the 'Browse' button.
+  StrCpy $INSTDIR "$PROGRAMFILES\${MUI_PRODUCT}"
+FunctionEnd
+
+Function LaunchLink
+  SetOutPath "$INSTDIR\swganh"
+  Exec "$INSTDIR\swganh\swganh.exe"
 FunctionEnd
