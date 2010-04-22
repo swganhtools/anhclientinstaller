@@ -110,6 +110,10 @@ Section "SWGANH Game Client" SecClient
   ;Install the client files
   File /r client_files\*.*
   
+  ${If} ${FileExists} "$INSTDIR\datatables\*.*"
+	RMDir /r "$INSTDIR\datatables"  
+  ${EndIf}
+  
   ;Update the path to the SWG data directory
   !insertmacro ReplaceInFile "swg2uu_live.cfg" "!!SWG_PATH!!" "$SWG_PATH"
   Delete "swg2uu_live.cfg.old"
