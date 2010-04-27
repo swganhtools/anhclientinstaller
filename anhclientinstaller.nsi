@@ -6,6 +6,8 @@
 
 Var StartMenuFolder
 Var SWG_PATH
+Var Browse
+Var SWG_PATH_STATE
   
 ;--------------------------------
 ;Includes
@@ -76,6 +78,8 @@ FunctionEnd
 !insertmacro MUI_PAGE_LICENSE "misc\license.txt"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
+
+Page custom SWGInstallationDirectory SWGInstallationDirectoryValidate
   
 ;Start Menu Folder Page Configuration
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
@@ -101,17 +105,54 @@ FunctionEnd
 ;Installer Sections
 
 Section "SWGANH Game Client" SecClient
-  SetOverwrite ifdiff
   SetOutPath $INSTDIR
   
   ;Download missing tre files
   Call CheckTreFiles
   
   ;Install the client files
-  File /r client_files\*.*
+  SetOverwrite ifnewer
+  File "client_files\miles\mssdsp.flt"
+  File "client_files\miles\Msseax.m3d"
+  File "client_files\miles\mssmp3.asi"
+  File "client_files\miles\msssoft.m3d"
+  File "client_files\TREFix.exe"
+  File "client_files\swganh_config.exe"
+  File "client_files\swganh.exe"
+  File "client_files\swg2uu_preload.cfg"
+  File "client_files\swg2uu_opt.cfg"
+  File "client_files\swg2uu_live.cfg"
+  File "client_files\swg2uu.cfg"
+  File "client_files\s207_r.dll"
+  File "client_files\s206_r.dll"
+  File "client_files\s205_r.dll"
+  File "client_files\readme.txt"
+  File "client_files\preload.cfg"
+  File "client_files\Mss32.dll"
+  File "client_files\dpvs.dll"
+  File "client_files\anhpatch_00.tre"
+
+  SetOverwrite off
+  File "client_files\swg2uu_login.cfg"
   
+  ${If} ${FileExists} "$INSTDIR\appearance\*.*"
+	RMDir /r "$INSTDIR\appearance"
+  ${EndIf}
+
   ${If} ${FileExists} "$INSTDIR\datatables\*.*"
-	RMDir /r "$INSTDIR\datatables"  
+	RMDir /r "$INSTDIR\datatables"
+  ${EndIf}
+
+  ${If} ${FileExists} "$INSTDIR\string\*.*"
+	RMDir /r "$INSTDIR\string"
+  ${EndIf}
+
+  ${If} ${FileExists} "$INSTDIR\texture\*.*"
+	RMDir /r "$INSTDIR\texture"
+  ${EndIf}
+
+  ${If} ${FileExists} "$INSTDIR\ui\*.*"
+	RMDir /r "$INSTDIR\ui"
   ${EndIf}
   
   ;Update the path to the SWG data directory
