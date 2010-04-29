@@ -111,11 +111,10 @@ Section "SWGANH Game Client" SecClient
   Call CheckTreFiles
   
   ;Install the client files
+  SetOverwrite off
+  File "client_files\swg2uu_login.cfg"
+
   SetOverwrite ifnewer
-  File "client_files\miles\mssdsp.flt"
-  File "client_files\miles\Msseax.m3d"
-  File "client_files\miles\mssmp3.asi"
-  File "client_files\miles\msssoft.m3d"
   File "client_files\TREFix.exe"
   File "client_files\swganh_config.exe"
   File "client_files\swganh.exe"
@@ -131,9 +130,7 @@ Section "SWGANH Game Client" SecClient
   File "client_files\Mss32.dll"
   File "client_files\dpvs.dll"
   File "client_files\anhpatch_00.tre"
-
-  SetOverwrite off
-  File "client_files\swg2uu_login.cfg"
+  File /r "client_files\*.*"
   
   ${If} ${FileExists} "$INSTDIR\appearance\*.*"
 	RMDir /r "$INSTDIR\appearance"
@@ -157,6 +154,7 @@ Section "SWGANH Game Client" SecClient
   
   ;Update the path to the SWG data directory
   !insertmacro ReplaceInFile "swg2uu_live.cfg" "!!SWG_PATH!!" "$SWG_PATH"
+  !insertmacro ReplaceInFile "swg2uu_live.cfg" "!!ANH_PATH!!" "$INSTDIR"
   Delete "swg2uu_live.cfg.old"
   
   ;Store installation folder
