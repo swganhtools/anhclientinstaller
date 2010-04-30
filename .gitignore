@@ -1,2 +1,3 @@
 # files to be ignored
 *.exe
+client_files/*.*
