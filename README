@@ -23,10 +23,10 @@ directory (usually found within Program Files).
 Once downloaded copy the contents of the zip file to your NSIS directory 
 (usually found within Program Files).
 
-Obtain the client executables and dependencies and place them within the
-client_files directory. Right click on the clientinstaller.nsi file and choose
-Compile NSIS Script (Choose Compressor) option, then select the LZMA (solid)
-compression and hit OK.
+Next, obtain the client executable files and place them within a directory
+called "client_files" inside the client installer project main directory. Right 
+click on the clientinstaller.nsi file and choose the Compile NSIS Script 
+(Choose Compressor) option, then select the LZMA (solid) compression and hit OK.
 
 External Links
 --------------
