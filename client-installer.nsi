@@ -65,7 +65,7 @@ FunctionEnd
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_RUN_TEXT "Start the SWG:ANH Client Configuration"
   !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchConfig"
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\readme.txt"
+!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme Document"
 !define MUI_FINISHPAGE_LINK "SWG:ANH Community Website"
   !define MUI_FINISHPAGE_LINK_LOCATION "http://www.swganh.com/"
@@ -114,7 +114,7 @@ Section "SWGANH Game Client" SecClient
   SetOverwrite off
   File "client_files\swg2uu_login.cfg"
 
-  SetOverwrite ifnewer
+  SetOverwrite on
   File "client_files\TREFix.exe"
   File "client_files\swganh_config.exe"
   File "client_files\swganh.exe"
@@ -125,7 +125,7 @@ Section "SWGANH Game Client" SecClient
   File "client_files\s207_r.dll"
   File "client_files\s206_r.dll"
   File "client_files\s205_r.dll"
-  File "client_files\readme.txt"
+  File "client_files\README.txt"
   File "client_files\preload.cfg"
   File "client_files\Mss32.dll"
   File "client_files\dpvs.dll"
@@ -175,7 +175,7 @@ Section "SWGANH Game Client" SecClient
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\SWGANH Client.lnk" "$INSTDIR\swganh.exe"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Client.lnk" "$INSTDIR\swganh_config.exe"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\README.lnk" "$INSTDIR\readme.txt"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\README.lnk" "$INSTDIR\README.txt"
     
   !insertmacro MUI_STARTMENU_WRITE_END
 
