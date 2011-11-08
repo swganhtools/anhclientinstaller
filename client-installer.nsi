@@ -68,7 +68,7 @@ FunctionEnd
 !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme Document"
 !define MUI_FINISHPAGE_LINK "SWG:ANH Community Website"
-  !define MUI_FINISHPAGE_LINK_LOCATION "http://www.swganh.com/"
+  !define MUI_FINISHPAGE_LINK_LOCATION "http://swganh.com"
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
 
 ;--------------------------------
@@ -112,24 +112,13 @@ Section "SWGANH Game Client" SecClient
   
   ;Install the client files
   SetOverwrite off
-  File "client_files\swg2uu_login.cfg"
+  File "client_files\login.cfg"
 
   SetOverwrite on
-  File "client_files\TREFix.exe"
-  File "client_files\swganh_config.exe"
-  File "client_files\swganh.exe"
-  File "client_files\swg2uu_preload.cfg"
-  File "client_files\swg2uu_opt.cfg"
-  File "client_files\swg2uu_live.cfg"
-  File "client_files\swg2uu.cfg"
-  File "client_files\s207_r.dll"
-  File "client_files\s206_r.dll"
-  File "client_files\s205_r.dll"
-  File "client_files\README.txt"
-  File "client_files\preload.cfg"
-  File "client_files\Mss32.dll"
-  File "client_files\dpvs.dll"
-  File "client_files\anhpatch_00.tre"
+  File "client_files\*.exe"
+  File "client_files\*.cfg"
+  File "client_files\*.dll"
+  File /nonfatal "client_files\*.tre"
   File /r "client_files\*.*"
   
   ${If} ${FileExists} "$INSTDIR\appearance\*.*"
@@ -153,9 +142,9 @@ Section "SWGANH Game Client" SecClient
   ${EndIf}
   
   ;Update the path to the SWG data directory
-  !insertmacro ReplaceInFile "swg2uu_live.cfg" "!!SWG_PATH!!" "$SWG_PATH"
-  !insertmacro ReplaceInFile "swg2uu_live.cfg" "!!ANH_PATH!!" "$INSTDIR"
-  Delete "swg2uu_live.cfg.old"
+  !insertmacro ReplaceInFile "live.cfg" "!!SWG_PATH!!" "$SWG_PATH"
+  !insertmacro ReplaceInFile "live.cfg" "!!ANH_PATH!!" "$INSTDIR"
+  Delete "live.cfg.old"
   
   ;Store installation folder
   WriteRegStr HKCU "Software\SWGANH Client" "" $INSTDIR
@@ -169,31 +158,16 @@ Section "SWGANH Game Client" SecClient
   
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
-    CreateShortCut "$DESKTOP\SWGANH Client.lnk" "$INSTDIR\swganh.exe" "-- -s Station  subscriptionFeatures=1 gameFeatures=255"
+    CreateShortCut "$DESKTOP\SWGANH Client.lnk" "$INSTDIR\SwgClient_r.exe" "-- -s Station  subscriptionFeatures=1 gameFeatures=255"
   
     ;Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\SWGANH Client.lnk" "$INSTDIR\swganh.exe"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Client.lnk" "$INSTDIR\swganh_config.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\SWGANH Client.lnk" "$INSTDIR\SwgClient_r.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Client.lnk" "$INSTDIR\SwgClientSetup_r.exe"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\README.lnk" "$INSTDIR\README.txt"
     
   !insertmacro MUI_STARTMENU_WRITE_END
 
-SectionEnd
-
-Section "Documentation" SecGuide
-
-  SetOutPath "$INSTDIR"  
-  
-  ;Install the documentation
-  File /r docs\*.*
-  
-  ;create shortcuts
-  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    CreateShortCut "$DESKTOP\SWGANH - QA Guide.lnk" "$INSTDIR\SWGANH - QA Guide.chm" ""
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\docs\QA Guide.lnk" "$INSTDIR\SWGANH - QA Guide.chm"
-  !insertmacro MUI_STARTMENU_WRITE_END
-  
 SectionEnd
 
 ;--------------------------------
@@ -203,7 +177,6 @@ Section "Uninstall"
 
   ;Delete any desktop shortcuts that may still exist
   Delete "$DESKTOP\SWGANH Client.lnk"
-  Delete "$DESKTOP\SWGANH - QA Guide.lnk"
  
   ;Delete the start menu items and the application installation directory
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
@@ -222,10 +195,8 @@ SectionEnd
 
 ;Language strings
 LangString DESC_SecClient ${LANG_ENGLISH} "The SWG:ANH Game Client is used to connect to SWG:ANH based servers."
-LangString DESC_SecGuide ${LANG_ENGLISH} "The SWG:ANH Documentation feature provides useful information, tutorials and guides for testers."
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SecClient)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGuide} $(DESC_SecGuide)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
