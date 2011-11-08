@@ -14,7 +14,7 @@ Function DownloadFileIfMissing
     Pop $0
     StrCmp $0 $R2 _finish _download
 	_download:
-		inetc::get /TIMEOUT 30000 /QUESTION "" /CAPTION "Star Wars Galaxies Tre File - $R0" /RESUME "Network error. Retry?" http://patch.starwarsgalaxies.com:7040/patch/swg/$R1/$R0 $SWG_PATH\$R0 /END
+		inetc::get /TIMEOUT 30000 /QUESTION "" /CAPTION "Star Wars Galaxies Tre File - $R0" /RESUME "Network error. Retry?" http://swganh.com/patch/swg/$R1/$R0 $SWG_PATH\$R0 /END
 		Pop $0 ;Get the return value
 		StrCmp $0 "OK" _finish
       MessageBox MB_OK "Download Status: $0 - $R0"
